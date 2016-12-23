@@ -1,0 +1,22 @@
+#!/bin/sh
+# Deploy hook
+
+PROJECT=my-project
+WWW_BASE_DIR=/var/www/public_html
+GIT_DIR=/var/my-repos/$PROJECT.fi.git
+DIST_SUBDIR=dist
+
+DATE=`date +%Y%m%d_%H%M%S`
+RELEASE_DIR=$PROJECT-releases/$DATE
+RELEASE_BASE_DIR=$WWW_BASE_DIR/$RELEASE_DIR
+
+while read oldrev newrev ref
+do
+    if [[ $ref =~ .*/master$ ]];
+    then
+        mkdir -p $RELEASE_BASE_DIR
+        git --work-tree=$RELEASE_BASE_DIR --git-dir=$GIT_DIR checkout -f
+
+        ln -nfs $RELEASE_DIR/$DIST_SUBDIR $WWW_BASE_DIR/$PROJECT
+    fi
+done
