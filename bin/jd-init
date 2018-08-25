@@ -1,0 +1,46 @@
+#!/bin/bash
+APPDIR=$(realpath $(dirname "$0"))
+
+CONF_HOME=~/.jdeploy
+CONF_FILE=$CONF_HOME/conf
+
+if [ ! -f $CONF_FILE ]; then
+	echo " * First run. Initializing..."
+	mkdir $CONF_HOME
+	mkdir -p $CONF_HOME/repos
+	echo " * Created repo dir:" $CONF_HOME/repos
+	echo REPO_ROOT=$(realpath $CONF_HOME/repos) >> $CONF_FILE
+	echo WWW_BASE_DIR=$(realpath ~/public_html) >> $CONF_FILE
+fi
+
+if [ "$#" -eq 0 ]; then
+	echo
+	echo " !! PROJECT_NAME missing."
+	echo
+	exit 1;
+fi
+
+# read config
+source $CONF_FILE
+
+# read args
+PROJECT=$1
+
+# create repo
+PROJECT_DIR=$REPO_ROOT/$PROJECT.git
+mkdir -p $PROJECT_DIR
+cd $PROJECT_DIR
+git init --bare --shared
+
+# setup hook
+HOOK_FILE=$PROJECT_DIR/hooks/post-receive
+cat $APPDIR/post-receive.template | sed 's|{{project}}|'$PROJECT'|g' | sed 's|{{www_base_dir}}|'$WWW_BASE_DIR'|g' | sed 's|{{git_dir}}|'$PROJECT_DIR'|g' > $HOOK_FILE
+
+# output repo clone instructions
+HOST='<your-host>'
+REPOPATH=`realpath $PROJECT_DIR`
+echo
+echo "Wohoo! Start working:"
+echo
+echo "  git clone ssh://$HOST$REPOPATH"
+echo

@@ -1,9 +1,9 @@
 #!/bin/sh
 # Deploy hook
 
-PROJECT=my-project
-WWW_BASE_DIR=/var/www/public_html
-GIT_DIR=/var/my-repos/$PROJECT.fi.git
+PROJECT={{project}}
+WWW_BASE_DIR={{www_base_dir}}
+GIT_DIR={{git_dir}}
 DIST_SUBDIR=dist
 
 DATE=`date +%Y%m%d_%H%M%S`
