@@ -37,10 +37,11 @@ HOOK_FILE=$PROJECT_DIR/hooks/post-receive
 cat $APPDIR/post-receive.template | sed 's|{{project}}|'$PROJECT'|g' | sed 's|{{www_base_dir}}|'$WWW_BASE_DIR'|g' | sed 's|{{git_dir}}|'$PROJECT_DIR'|g' > $HOOK_FILE
 
 # output repo clone instructions
-HOST='<your-host>'
+HOST=`hostname`
+USER=`whoami`
 REPOPATH=`realpath $PROJECT_DIR`
 echo
 echo "Wohoo! Start working:"
 echo
-echo "  git clone ssh://$HOST$REPOPATH"
+echo "  git clone ssh://$USER@$HOST$REPOPATH"
 echo
